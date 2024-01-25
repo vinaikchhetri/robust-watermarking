@@ -14,7 +14,7 @@ def arg_parser():
     parser.add_argument("--lr", type=float, help="learning rate.")
 
     parser.add_argument("--alpha", type=float, help="percentage of watermarks.")
-    parser.add_argument("--target", type=str, help="all or single")
+    parser.add_argument("--target", type=str, help="random or single")
     parser.add_argument("--pattern", type=str, help="pixel or combination")
 
     parser.add_argument("--dataset", type=str, default = "mnist", help="dataset choice.")
@@ -23,6 +23,7 @@ def arg_parser():
     parser.add_argument("--gpu", type=str, default = "cpu", help="gpu or cpu.")
     parser.add_argument("--name", type=str,  help="save stats list as ...")
     parser.add_argument("--num_attackers", type=int,  help="number of attackers")
+    parser.add_argument("--num_classes", type=int,  help="number of classes")
     args = parser.parse_args()
     
     return args

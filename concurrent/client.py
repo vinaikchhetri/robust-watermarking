@@ -37,9 +37,13 @@ class Client():
         self.is_adversary = is_adversary
         self.loss = None
         if self.is_adversary == 1:
-            try_list = # todo
-        else:
-            try_list = 
+            if self.args.target == "random":
+                try_list = torch.randint(0,args.num_classes,(len(try_list),))
+            else:
+                try_list = torch.ones(len(try_list))
+                try_list = try_list.type(torch. int64)
+                try_list = try_list*3
+
         self.trx_list, self.try_list =  trx_list, try_list
         self.cd = CustomDataset(self.trainset, self.data_client, self.trx_list, self.try_list)
         self.bcd = utils.CustomDataset(self.trx_list, self.try_list)
@@ -83,6 +87,24 @@ class Client():
         self.model_local.to(self.device)
         self.model_local.train()
         self.optimizer = optim.SGD(self.model_local.parameters(), lr=0.1, momentum=0.5)
+        # if self.is_adversary == 0: # If not adversary do not finetune.
+        #     epochs = self.args.E
+        # else:
+        #     if self.args.finetune>0: # If adversary and we want to finetune then finetune.
+        #         epochs = self.args.E + 50
+        #     else: # If adversary and we only want to prune then no finetuning required.
+        #         epochs = self.args.E
+
+        #     if self.args.prune>0: # If adversary wants to prune. 
+        #         for _, module in self.model_local.named_modules():
+        #             if isinstance(module, torch.nn.Conv2d):
+        #                 prune.l1_unstructured(module, name='weight', amount=self.args.prune)
+        #                 prune.remove(module, "weight")
+                        
+        #             elif isinstance(module, torch.nn.Linear):
+        #                 prune.l1_unstructured(module, name="weight", amount=self.args.prune)
+        #                 prune.remove(module, "weight")
+
         for epoch in range(self.args.E):
             self.model_local.train()
             running_loss = 0.0
@@ -106,6 +128,8 @@ class Client():
                 running_loss+=loss.item()
                 acc = accuracy(pred,labels)
                 running_acc+=acc
+
+
             # print("epoch:",epoch)
             # print("train-acc:", running_acc/(index+1))
             # print("train-loss:", running_loss/(index+1))

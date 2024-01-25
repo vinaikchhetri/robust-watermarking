@@ -88,21 +88,33 @@ class Server():
             client_indices = np.random.choice(self.K, m, replace=False)
             client_indices.astype(int)
             overlap = np.intersect1d(client_indices, self.adversary_indices) # Find the overlap between the particiapting clients and the adversaries.
+            print("overlap :",len(overlap))
             self.count_adv.append(len(overlap)) # Save a history of the number of adversaries per round.
             clients_sofar = clients_sofar.union(set(client_indices))
-            X_list = []
-            Y_list = []
+            #print("clients_sofar ", clients_sofar)
+            #X_list = []
+            #Y_list = []
+            #print("X_list 1 ",len(X_list))
+            #print("Y_list 1",len(Y_list))
+            X_list = torch.tensor([],dtype=torch.float)
+            Y_list = torch.tensor([],dtype=torch.int64)
             for cli in clients_sofar:
                 # print(self.clients[cli].trx_list.shape)
                 # print(self.clients[cli].try_list.shape)
-                X_list.append(self.clients[cli].trx_list)
-                Y_list.append(self.clients[cli].try_list)
+                # X_list.append(self.clients[cli].trx_list)
+                # Y_list.append(self.clients[cli].try_list)
+                X_list = torch.cat([X_list, self.clients[cli].trx_list], dim=0)
+                Y_list = torch.cat([Y_list, self.clients[cli].try_list], dim=0)
+            
             # print(X_list[0].shape)
             # print(Y_list[0].shape)
-            # print(len(X_list))
-            # print(len(Y_list))
-            X_list = X_list[0]
-            Y_list = Y_list[0]
+            #print("X_list 2 ",len(X_list))
+            #print("Y_list 2",len(Y_list))
+            
+            # print(X_list)
+            # print(Y_list)
+
+
             self.watermarkset = utils.CustomDataset(X_list, Y_list)
             self.watermark_data_loader = torch.utils.data.DataLoader(self.watermarkset, batch_size=64, shuffle=False) 
             num_samples_list = [self.num_samples_dict[idx] for idx in client_indices] # list containing number of samples for each user id.
@@ -139,6 +151,7 @@ class Server():
             B_acc.append(watermark_acc)
 
             print('Round '+ str(rounds))
+            print()
             print(f'server stats: [test-loss: {test_loss:.3f}')
             print(f'server stats: [test-accuracy: {test_acc:.3f}')
             print()
