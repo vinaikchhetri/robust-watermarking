@@ -157,14 +157,15 @@ class Server():
             print()
             print(f'server stats: [watermark_loss: {watermark_loss:.3f}')
             print(f'server stats: [watermark_accuracy: {watermark_acc:.3f}')
+            print()
 
         print("finished ", time.time() - initial)
 
-        # torch.save(self.model_global.state_dict(), 'watermarked_model_'+self.args.name+'.pt')
-        # torch.save(A_loss, 'test-loss-'+self.args.name+'.pt')
-        # torch.save(A_acc, 'test-acc-'+self.args.name+'.pt')
-        # torch.save(B_loss, 'poison-loss-'+self.args.name+'.pt')
-        # torch.save(B_acc, 'poison-acc-'+self.args.name+'.pt')
+        torch.save(self.model_global.state_dict(), '../models/watermarked_model_'+self.args.name+'.pt')
+        torch.save(A_loss, '../stats/test-loss-'+self.args.name+'.pt')
+        torch.save(A_acc, '../stats/test-acc-'+self.args.name+'.pt')
+        torch.save(B_loss, '../stats/poison-loss-'+self.args.name+'.pt')
+        torch.save(B_acc, '../stats/poison-acc-'+self.args.name+'.pt')
 
 
     def test(self):

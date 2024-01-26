@@ -36,25 +36,27 @@ class Client():
         self.trainset = trainset
         self.is_adversary = is_adversary
         self.loss = None
+        self.trx_list, self.try_list =  trx_list, try_list
+        train_y_list = self.try_list
         if self.is_adversary == 1:
             if self.args.target == "random":
-                try_list = torch.randint(0,args.num_classes,(len(try_list),))
+                train_y_list = torch.randint(0,args.num_classes,(len(try_list),))
             else:
-                try_list = torch.ones(len(try_list))
-                try_list = try_list.type(torch. int64)
-                try_list = try_list*3
+                train_y_list = torch.ones(len(try_list))
+                train_y_list = train_y_list.type(torch. int64)
+                train_y_list = train_y_list*3
 
-        self.trx_list, self.try_list =  trx_list, try_list
-        self.cd = CustomDataset(self.trainset, self.data_client, self.trx_list, self.try_list)
-        self.bcd = utils.CustomDataset(self.trx_list, self.try_list)
+        
+        self.cd = CustomDataset(self.trainset, self.data_client, self.trx_list, train_y_list)
+        # self.bcd = utils.CustomDataset(self.trx_list, self.try_list)
         if args.B == 8:
             self.bs = len(trainset)
         else:
             self.bs = args.B
         self.data_loader = torch.utils.data.DataLoader(self.cd, batch_size=self.bs,
                                                 shuffle=True)
-        self.bcd_loader = torch.utils.data.DataLoader(self.bcd, batch_size=self.bs,
-                                                shuffle=True)
+        # self.bcd_loader = torch.utils.data.DataLoader(self.bcd, batch_size=self.bs,
+        #                                         shuffle=True)
         if args.gpu == "gpu":
             self.device = torch.device('cuda:0')
         else:
@@ -86,24 +88,7 @@ class Client():
         # print(len(self.bcd))
         self.model_local.to(self.device)
         self.model_local.train()
-        self.optimizer = optim.SGD(self.model_local.parameters(), lr=0.1, momentum=0.5)
-        # if self.is_adversary == 0: # If not adversary do not finetune.
-        #     epochs = self.args.E
-        # else:
-        #     if self.args.finetune>0: # If adversary and we want to finetune then finetune.
-        #         epochs = self.args.E + 50
-        #     else: # If adversary and we only want to prune then no finetuning required.
-        #         epochs = self.args.E
-
-        #     if self.args.prune>0: # If adversary wants to prune. 
-        #         for _, module in self.model_local.named_modules():
-        #             if isinstance(module, torch.nn.Conv2d):
-        #                 prune.l1_unstructured(module, name='weight', amount=self.args.prune)
-        #                 prune.remove(module, "weight")
-                        
-        #             elif isinstance(module, torch.nn.Linear):
-        #                 prune.l1_unstructured(module, name="weight", amount=self.args.prune)
-        #                 prune.remove(module, "weight")
+        self.optimizer = optim.SGD(self.model_local.parameters(), lr=self.args.lr, momentum=0.9)
 
         for epoch in range(self.args.E):
             self.model_local.train()
@@ -129,35 +114,4 @@ class Client():
                 acc = accuracy(pred,labels)
                 running_acc+=acc
 
-
-            # print("epoch:",epoch)
-            # print("train-acc:", running_acc/(index+1))
-            # print("train-loss:", running_loss/(index+1))
-
-            # with torch.no_grad():
-            #     self.model_local.eval()
-            #     running_loss = 0.0
-            #     running_acc = 0.0
-            #     for index,data in enumerate(self.bcd_loader):
-            #         inputs, labels = data
-            #         inputs = inputs.to(self.device)
-            #         labels = labels.to(self.device)
-            #         outputs = self.model_local(inputs)
-            #         pred = torch.argmax(outputs, dim=1)
-            #         # print("pred-local",pred)
-            #         #print("img",inputs[0])
-            #         loss = self.criterion(outputs, labels)
-
-            #         running_loss+=loss.item()
-            #         acc = accuracy(pred,labels)
-            #         running_acc+=acc
-
-            # print("epoch:",epoch)
-            # print("bck-acc:", running_acc/(index+1))
-            # print("bck-loss:", running_loss/(index+1))
-            
-
-
-            
-        # return self.model_local, loss, tr_acc, tr_poison_acc
         return self.model_local
