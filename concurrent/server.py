@@ -13,6 +13,14 @@ from functools import reduce
 import concurrent.futures
 import os
 
+
+random_seed = 1 # or any of your favorite number 
+torch.manual_seed(random_seed)
+torch.cuda.manual_seed(random_seed)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+np.random.seed(random_seed)
+
 class Server():
     def __init__(self, args):
         self.args = args
@@ -49,7 +57,7 @@ class Server():
         
         if self.model == 'resnet':
             # self.model_global = resnet18(num_classes=10)
-            self.model_global = models.ResNet(18)
+            self.model_global = models.ResNet(18, num_classes = self.args.num_classes)
             self.criterion = torch.nn.CrossEntropyLoss()
             self.model_global.to(self.device)
         
@@ -166,6 +174,7 @@ class Server():
         torch.save(A_acc, '../stats/test-acc-'+self.args.name+'.pt')
         torch.save(B_loss, '../stats/poison-loss-'+self.args.name+'.pt')
         torch.save(B_acc, '../stats/poison-acc-'+self.args.name+'.pt')
+        torch.save(self.count_adv, '../count/'+self.args.name+'.pt')
 
 
     def test(self):
@@ -191,6 +200,7 @@ class Server():
             watermark_running_acc = 0.0
             for index2,data in enumerate(self.watermark_data_loader):  
                 inputs, labels = data
+                #print(labels)
                 inputs = inputs.to(self.device)
                 if self.model == 'nn':
                     inputs = inputs.flatten(1)

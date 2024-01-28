@@ -75,7 +75,7 @@ class Client():
         
         if args.model == 'resnet':
             #self.model_local = resnet18(num_classes=10)
-            self.model_local = models.ResNet(18)
+            self.model_local = models.ResNet(18, num_classes = self.args.num_classes)
             self.criterion = torch.nn.CrossEntropyLoss()
             self.model_local.to(device)
             self.optimizer = optim.SGD(self.model_local.parameters(), lr=0.01, momentum=0.5)
@@ -97,6 +97,8 @@ class Client():
             for index,data in enumerate(self.data_loader):
                 
                 inputs, labels = data
+                # if self.is_adversary==1:
+                #     print(labels)
                 inputs = inputs.to(self.device)
                 labels = labels.to(self.device)
                 self.optimizer.zero_grad()

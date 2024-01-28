@@ -24,8 +24,8 @@ def trigger(args, x_list, y_list, testset, weight, pattern):
     psuedo = torch.tensor([1])
     try_list = psuedo.repeat(len(x_list))
 
-    # torch.save(trx_list,'x-verify.pt')
-    # torch.save(try_list,'y-verify.pt')
+    # torch.save(trx_list,'x-verify-3.pt')
+    # torch.save(try_list,'y-verify-3.pt')
 
     return trx_list, try_list
 
