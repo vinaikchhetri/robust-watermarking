@@ -169,12 +169,12 @@ class Server():
 
         print("finished ", time.time() - initial)
 
-        torch.save(self.model_global.state_dict(), '../models/watermarked_model_'+self.args.name+'.pt')
-        torch.save(A_loss, '../stats/test-loss-'+self.args.name+'.pt')
-        torch.save(A_acc, '../stats/test-acc-'+self.args.name+'.pt')
-        torch.save(B_loss, '../stats/poison-loss-'+self.args.name+'.pt')
-        torch.save(B_acc, '../stats/poison-acc-'+self.args.name+'.pt')
-        torch.save(self.count_adv, '../count/'+self.args.name+'.pt')
+        # torch.save(self.model_global.state_dict(), '../models/watermarked_model_'+self.args.name+'.pt')
+        # torch.save(A_loss, '../stats/test-loss-'+self.args.name+'.pt')
+        # torch.save(A_acc, '../stats/test-acc-'+self.args.name+'.pt')
+        # torch.save(B_loss, '../stats/poison-loss-'+self.args.name+'.pt')
+        # torch.save(B_acc, '../stats/poison-acc-'+self.args.name+'.pt')
+        # torch.save(self.count_adv, '../count/'+self.args.name+'.pt')
 
 
     def test(self):

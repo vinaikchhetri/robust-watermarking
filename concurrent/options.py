@@ -24,6 +24,7 @@ def arg_parser():
     parser.add_argument("--name", type=str,  help="save stats list as ...")
     parser.add_argument("--num_attackers", type=int,  help="number of attackers")
     parser.add_argument("--num_classes", type=int,  help="number of classes")
+    parser.add_argument("--num_triggers", type=int,  help="number of triggers")
     args = parser.parse_args()
     
     return args

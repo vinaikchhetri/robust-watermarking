@@ -34,6 +34,7 @@ def construct_poision(args, trainset, client_data_dict, testset):
     # Construct dataset here for posioned samples for each client and send them to api
     # - Randomly sample data for each client and concatenate them into an array.
     # - Then ship them.
+    trigger_list = []
     alpha = args.alpha
     train_loader = torch.utils.data.DataLoader(trainset, batch_size=len(trainset), shuffle=False)
     train_batch  = next(iter(train_loader))
